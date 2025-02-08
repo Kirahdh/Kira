@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Mods Generator</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00ff9d;
+            --secondary: #0a192f;
+            --accent: #64ffda;
+            --text: #e6f1ff;
+            --dark-bg: #0a1930;
+            --card-bg: rgba(10, 25, 47, 0.7);
+            --terminal-bg: rgba(0, 0, 0, 0.85);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: var(--dark-bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.05;
+            z-index: 9999;
+            background: url('data:image/png;base64,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');
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, var(--primary) 0%, transparent 100%);
+            animation: rotate 20s linear infinite;
+            opacity: 0.1;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: var(--text);
+        }
+
+        /* Terminal Section */
+        .terminal-container {
+            background: var(--terminal-bg);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 40px auto;
+            max-width: 800px;
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .terminal-header {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .terminal-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .terminal-close { background: #ff5f56; }
+        .terminal-minimize { background: #ffbd2e; }
+        .terminal-maximize { background: #27c93f; }
+
+        .terminal-content {
+            font-family: 'Courier New', monospace;
+            color: var(--primary);
+        }
+
+        .terminal-line {
+            display: flex;
+            margin: 5px 0;
+        }
+
+        .terminal-prompt {
+            color: var(--accent);
+            margin-right: 10px;
+        }
+
+        /* Services Section */
+        .services {
+            padding: 80px 0;
+        }
+
+        .service-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(100, 255, 218, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .whatsapp-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: #25D366;
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .whatsapp-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .hero p {
+                font-size: 1.2rem;
+            }
+            .terminal-container {
+                margin: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="noise"></div>
+    
+    <div class="hero">
+        <div class="hero-content">
+            <h1>AI Mods Generator</h1>
+            <p>Gere mods de aplicativos usando Inteligência Artificial</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="terminal-container">
+            <div class="terminal-header">
+                <div class="terminal-btn terminal-close"></div>
+                <div class="terminal-btn terminal-minimize"></div>
+                <div class="terminal-btn terminal-maximize"></div>
+            </div>
+            <div class="terminal-content">
+                <div class="terminal-line">
+                    <span class="terminal-prompt">$</span>
+                    <span class="terminal-text">Iniciando geração de mod...</span>
+                </div>
+                <div id="terminal-output"></div>
+            </div>
+            <button id="execute-btn" class="whatsapp-btn">Executar Processo</button>
+        </div>
+
+        <div class="services">
+            <div class="service-card">
+                <h3>Geração Automática</h3>
+                <p>Nosso sistema utiliza IA avançada para criar mods personalizados</p>
+            </div>
+            <div class="service-card">
+                <h3>Demonstração em Vídeo</h3>
+                <p>Veja o funcionamento do seu mod antes de baixar</p>
+            </div>
+            <div class="service-card">
+                <h3>Suporte Premium</h3>
+                <p>Assistência especializada via WhatsApp</p>
+            </div>
+        </div>
+
+        <div class="contact">
+            <h2>Entre em Contato</h2>
+            <a href="https://wa.me/5583988809291" class="whatsapp-btn">
+                <i class="fab fa-whatsapp"></i> Conversar no WhatsApp
+            </a>
+        </div>
+    </div>
+
+    <div class="fab" id="scroll-top">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <script>
+        const terminalOutput = document.getElementById('terminal-output');
+        const executeBtn = document.getElementById('execute-btn');
+        const scrollTop = document.getElementById('scroll-top');
+
+        const terminalCommands = [
+            "Iniciando processo de geração...",
+            "Analisando requisitos do aplicativo...",
+            "Aplicando algoritmos de IA...",
+            "Otimizando código...",
+            "Gerando demonstração em vídeo...",
+            "Processo concluído! Entre em contato pelo WhatsApp para receber seu mod."
+        ];
+
+        let commandIndex = 0;
+
+        executeBtn.addEventListener('click', async () => {
+            executeBtn.disabled = true;
+            terminalOutput.innerHTML = '';
+            commandIndex = 0;
+
+            const executeCommands = async () => {
+                if (commandIndex < terminalCommands.length) {
+                    const line = document.createElement('div');
+                    line.className = 'terminal-line';
+                    line.innerHTML = `
+                        <span class="terminal-prompt">$</span>
+                        <span class="terminal-text">${terminalCommands[commandIndex]}</span>
+                    `;
+                    terminalOutput.appendChild(line);
+                    commandIndex++;
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    await executeCommands();
+                } else {
+                    executeBtn.disabled = false;
+                    window.location.href = "https://wa.me/5583988809291";
+                }
+            };
+
+            await executeCommands();
+        });
+
+        scrollTop.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Parallax effect on hero section
+        document.addEventListener('mousemove', (e) => {
+            const hero = document.querySelector('.hero');
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+            
+            hero.style.transform = `translate(${mouseX * 20}px, ${mouseY * 20}px)`;
+        });
+
+        // Animate services on scroll
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.service-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'all 0.5s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
